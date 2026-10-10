@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bắc Ninh - Hào Khí Kinh Bắc & Di Sản Văn Hóa</title>
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+      --card-bg: rgba(255, 255, 255, 0.07);
+      --border: rgba(255, 255, 255, 0.15);
+      --accent: #f59e0b;
+      --accent-light: #fbbf24;
+      --text-main: #f8fafc;
+      --text-sub: #cbd5e1;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    /* Slides Container */
+    .deck-container {
+      position: relative;
+      width: 90vw;
+      max-width: 1100px;
+      height: 80vh;
+      max-height: 680px;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+
+    .slide {
+      position: absolute;
+      inset: 0;
+      padding: 3rem 4rem;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(20px) scale(0.98);
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0) scale(1);
+    }
+
+    /* Typography */
+    .tag {
+      display: inline-block;
+      padding: 0.3rem 0.8rem;
+      background: rgba(245, 158, 11, 0.2);
+      color: var(--accent-light);
+      border: 1px solid var(--accent);
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 1rem;
+      width: fit-content;
+    }
+
+    h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      background: linear-gradient(to right, #ffffff, #f59e0b);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1rem;
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: 2.2rem;
+      color: var(--text-main);
+      margin-bottom: 1.5rem;
+    }
+
+    p.lead {
+      font-size: 1.2rem;
+      color: var(--text-sub);
+      line-height: 1.6;
+      max-width: 800px;
+    }
+
+    /* Grid Layouts */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+      align-items: center;
+      margin-top: 1rem;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      padding: 1.5rem;
+      border-radius: 14px;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+    }
+
+    .card h3 {
+      color: var(--accent-light);
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .card p {
+      color: var(--text-sub);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .image-frame {
+      width: 100%;
+      height: 280px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    .image-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+
+    .image-frame:hover img {
+      transform: scale(1.05);
+    }
+
+    /* Navigation Controls */
+    .controls {
+      position: absolute;
+      bottom: 1.5rem;
+      right: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      z-index: 10;
+    }
+
+    .btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #000;
+    }
+
+    .slide-number {
+      font-size: 0.9rem;
+      color: var(--text-sub);
+      font-weight: 600;
+      min-width: 50px;
+      text-align: center;
+    }
+
+    /* Progress Bar */
+    .progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 4px;
+      background: var(--accent);
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* Keyboard hints */
+    .key-hint {
+      position: absolute;
+      bottom: 1.5rem;
+      left: 2rem;
+      font-size: 0.8rem;
+      color: rgba(255, 255, 255, 0.4);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="deck-container">
+    
+    <!-- Slide 1: Trang tiêu đề -->
+    <div class="slide active">
+      <span class="tag">Thuyết Trình Địa Phương</span>
+      <h1>Bắc Ninh - Hào Khí Kinh Bắc</h1>
+      <p class="lead">Hành trình khám phá vùng đất "Địa linh nhân kiệt" — Nơi giao thoa giữa di sản văn hóa nghìn năm và nhịp sống công nghiệp hiện đại.</p>
+    </div>
+
+    <!-- Slide 2: Tổng quan địa lý & Lịch sử -->
+    <div class="slide">
+      <span class="tag">01. Tổng Quan</span>
+      <h2>Cái Nôi Văn Hóa Kinh Bắc</h2>
+      <div class="grid-2">
+        <div>
+          <div class="card" style="margin-bottom: 1rem;">
+            <h3>Vị Trí Địa Lý</h3>
+            <p>Nằm tại cửa ngõ phía Bắc Thủ đô Hà Nội, thuộc vùng Đồng bằng sông Hồng giàu phù sa và truyền thống lịch sử.</p>
+          </div>
+          <div class="card">
+            <h3>Lịch Sử Lâu Đời</h3>
+            <p>Bắc Ninh là trung tâm văn hóa, chính trị, tôn giáo cổ xưa nhất của Việt Nam, gắn liền với các triều đại lịch sử rực rỡ như triều Lý.</p>
+          </div>
+        </div>
+        <div class="image-frame">
+          <img src="https://image.vietgoing.com/destination/large/vietgoing_sak2403125824.webp" alt="Đền Đô Bắc Ninh">
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: Di sản Lịch sử & Tâm linh -->
+    <div class="slide">
+      <span class="tag">02. Danh Lam Thắng Cảnh</span>
+      <h2>Di Sản Lịch Sử & Tâm Linh</h2>
+      <div class="grid-2">
+        <div class="image-frame">
+          <img src="https://statics.vinpearl.com/dia-chi-chua-dau-bac-ninh_1753067248.jpg" alt="Chùa Dâu Bắc Ninh">
+        </div>
+        <div>
+          <div class="card" style="margin-bottom: 1rem;">
+            <h3>Chùa Dâu (Luy Lâu)</h3>
+            <p>Ngôi chùa cổ nhất Việt Nam, nơi khởi nguồn của Phật giáo Việt Nam với tháp Hòa Phong uy nghiêm trầm mặc.</p>
+          </div>
+          <div class="card">
+            <h3>Đền Đô (Mổ Cò)</h3>
+            <p>Nơi thờ tự 8 vị vua nhà Lý (Lý Bát Đế), di tích quốc gia đặc biệt mang kiến trúc cổ kính độc đáo.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 4: Di sản Phi vật thể Quan Họ -->
+    <div class="slide">
+      <span class="tag">03. Văn Hóa Phi Vật Thể</span>
+      <h2>Dân Ca Quan Họ Bắc Ninh</h2>
+      <div class="grid-2">
+        <div>
+          <p class="lead" style="margin-bottom: 1rem; font-size: 1.05rem;">
+            Được UNESCO công nhận là **Di sản văn hóa phi vật thể đại diện của nhân loại** (2009).
+          </p>
+          <div class="card">
+            <h3>Đặc Sắc Nghệ Thuật</h3>
+            <p>Lời ca vang, dlờng, nẩy, trôi mượt mà cùng trang phục liền anh áo khăn, liền chị áo tứ thân nón ba tầm duyên dáng.</p>
+          </div>
+        </div>
+        <div class="image-frame">
+          <img src="https://hoangthanhthanglong.vn/wp-content/uploads/2023/05/quanho1.jpg" alt="Dân ca Quan họ Bắc Ninh">
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 5: Làng nghề truyền thống -->
+    <div class="slide">
+      <span class="tag">04. Làng Nghề Bối Cảnh</span>
+      <h2>Tinh Hoa Làng Nghề Tranh Đông Hồ</h2>
+      <div class="grid-2">
+        <div class="image-frame">
+          <img src="https://statics.vinpearl.com/lang-tranh-dong-ho-2_1678375779.jpg" alt="Làng tranh Đông Hồ">
+        </div>
+        <div>
+          <div class="card" style="margin-bottom: 1rem;">
+            <h3>Tranh Dân Gian Đông Hồ</h3>
+            <p>In bằng bản khắc gỗ trên giấy điệp tự nhiên, phản ánh ước mơ đời thường, hồn nhiên của người nông dân Việt Nam.</p>
+          </div>
+          <div class="card">
+            <h3>Các Làng Nghề Khác</h3>
+            <p>Gốm Phù Lãng, Đúc đồng Đại Bái, Đồ gỗ mỹ nghệ Đồng Kỵ... góp phần làm nên danh tiếng Kinh Bắc.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 6: Bắc Ninh Hiện Đại & Kết Luận -->
+    <div class="slide">
+      <span class="tag">05. Tương Lai & Phát Triển</span>
+      <h2>Bắc Ninh - Đô Thị Thông Minh & Hiện Đại</h2>
+      <p class="lead" style="margin-bottom: 1.5rem;">
+        Bắc Ninh ngày nay vươn mình trở thành thủ phủ công nghiệp công nghệ cao của cả nước, phát triển hài hòa giữa **truyền thống** và **hiện đại**.
+      </p>
+      <div class="card" style="text-align: center; padding: 2rem; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(255,255,255,0.05));">
+        <h3 style="font-size: 1.6rem; color: #fff;">Cảm ơn thầy cô và các bạn đã lắng nghe!</h3>
+        <p style="margin-top: 0.5rem; color: var(--accent-light);">"Người Bắc Ninh vốn trọng tình, trọng nghĩa"</p>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button class="btn" id="prevBtn" title="Slide trước (Mũi tên trái)">&#10094;</button>
+      <span class="slide-number" id="slideNum">1 / 6</span>
+      <button class="btn" id="nextBtn" title="Slide sau (Mũi tên phải)">&#10095;</button>
+    </div>
+
+    <div class="key-hint">Dùng phím ◄ ► hoặc Space để chuyển slide</div>
+    <div class="progress-bar" id="progressBar"></div>
+
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const slideNum = document.getElementById('slideNum');
+    const progressBar = document.getElementById('progressBar');
+    
+    let currentSlide = 0;
+
+    function updateSlides() {
+      slides.forEach((slide, index) => {
+        slide.classList.toggle('active', index === currentSlide);
+      });
+      slideNum.textContent = `${currentSlide + 1} / ${slides.length}`;
+      progressBar.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+    }
+
+    function nextSlide() {
+      currentSlide = (currentSlide + 1) % slides.length;
+      updateSlides();
+    }
+
+    function prevSlide() {
+      currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+      updateSlides();
+    }
+
+    nextBtn.addEventListener('click', nextSlide);
+    prevBtn.addEventListener('click', prevSlide);
+
+    // Keyboard Navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+        nextSlide();
+      } else if (e.key === 'ArrowLeft') {
+        prevSlide();
+      }
+    });
+
+    // Initial load
+    updateSlides();
+  </script>
+</body>
+</html>
